@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UWAGA KAWA - CMS</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Panel edytora -->
+    <aside class="editor-sidebar">
+      <div class="editor-header">
+        <h1>🎨 Edytor Menu</h1>
+        <button id="toggle-mode-btn" class="mode-btn">👁️ Podgląd</button>
+      </div>
+
+      <div class="editor-content">
+        <!-- Ustawienia globalne -->
+        <section class="editor-section">
+          <h3>Ustawienia ogólne</h3>
+          <div class="field">
+            <label>Nazwa lokalu</label>
+            <input type="text" id="venue-name" value="UWAGA KAWA" />
+          </div>
+          <div class="field">
+            <label>Podtytuł</label>
+            <input type="text" id="venue-subtitle" value="" />
+          </div>
+        </section>
+
+        <!-- Sekcje menu -->
+        <section class="editor-section">
+          <div class="section-header">
+            <h3>Sekcje menu</h3>
+            <button id="add-section-btn" class="add-btn">+ Dodaj sekcję</button>
+          </div>
+          <div id="sections-container"></div>
+        </section>
+
+        <!-- Generowanie linku -->
+        <section class="editor-section share-section">
+          <h3>Udostępnij na TV</h3>
+          <button id="generate-link-btn" class="primary-btn">📺 Generuj link dla TV (1080x1920)</button>
+          <input type="text" id="share-link" readonly placeholder="Kliknij, aby wygenerować link" />
+          <button id="copy-link-btn" class="secondary-btn" disabled>📋 Kopiuj</button>
+        </section>
+      </div>
+    </aside>
+
+    <!-- Podgląd menu -->
+    <main class="preview-area" id="preview-area">
+      <div class="tv-screen">
+        <div class="menu-container">
+          <div id="menu-preview"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="autoscale.js"></script>
+  <script src="zoom-controls.js"></script>
+</body>
+</html>
