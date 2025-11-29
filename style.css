@@ -626,7 +626,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0;
-  transition: transform 0.3s ease-out, opacity 0.3s ease-in-out;
+  transition: all 0.3s ease-out;
   width: 100%;
   max-height: 1800px;
   padding-top: 60px;
@@ -636,6 +636,11 @@ body {
   opacity: 1;
   transform-origin: top center;
   overflow: visible;
+  
+  /* CSS Variables dla dynamicznych odstępów */
+  --section-margin: 48px;
+  --item-margin: 24px;
+  --section-padding: 30px 40px;
 }
 
 /* Logo header */
@@ -670,7 +675,7 @@ body {
 
 /* Menu section */
 .menu-section {
-  margin-bottom: 48px;
+  margin-bottom: var(--section-margin, 48px);
   width: 100%;
   max-width: 1500px;
   padding: 0 80px;
@@ -688,7 +693,7 @@ body {
 .section-box {
   border: 3px solid var(--border-color);
   border-radius: 16px;
-  padding: 30px 40px;
+  padding: var(--section-padding, 30px 40px);
   background: transparent;
   backdrop-filter: none;
 }
@@ -697,7 +702,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 24px;
+  margin-bottom: var(--item-margin, 24px);
   gap: 24px;
 }
 

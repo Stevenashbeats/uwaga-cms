@@ -26,53 +26,48 @@ function autoScaleContent() {
   
   isScaling = true;
   
-  // Płynne skalowanie w czasie rzeczywistym
+  // NOWA STRATEGIA: Zmniejszaj odstępy zamiast skalować
   requestAnimationFrame(() => {
-    // Usuń transition tymczasowo dla dokładnego pomiaru
-    const oldTransition = menuPreview.style.transition;
-    menuPreview.style.transition = 'none';
-    
-    // Resetuj transform do pomiaru
-    menuPreview.style.transform = 'scale(1)';
-    menuPreview.style.height = 'auto';
-    menuPreview.style.marginBottom = '0';
-    
-    // Force reflow
-    void menuPreview.offsetHeight;
-    
     // Zmierz rzeczywistą wysokość
     const contentHeight = menuPreview.scrollHeight;
     const maxHeight = 1800; // 1920 - 60 (top) - 60 (bottom)
     
     console.log(`📏 Autoscale: maxHeight=${maxHeight}px, contentHeight=${contentHeight}px`);
     
-    let newScale = 1;
-    
-    // Oblicz skalę z małym marginesem
-    if (contentHeight > maxHeight) {
-      newScale = (maxHeight / contentHeight) * 0.98; // 2% margines
-      console.log(`🔽 Skalowanie do ${Math.round(newScale * 100)}%`);
-    } else {
-      console.log(`✅ Zawartość mieści się bez skalowania`);
-    }
-    
-    // Przywróć transition dla płynności
-    menuPreview.style.transition = oldTransition || 'transform 0.3s ease-out, opacity 0.3s ease-in-out';
-    
-    // Zastosuj transform
-    currentScale = newScale;
-    menuPreview.style.transform = `scale(${newScale})`;
-    menuPreview.style.transformOrigin = 'top center';
-    
-    // Ustaw wysokość aby nie wychodziło poza
-    if (newScale < 1) {
-      const scaledHeight = contentHeight * newScale;
-      menuPreview.style.height = `${contentHeight}px`;
-      menuPreview.style.marginBottom = `-${Math.round(contentHeight - scaledHeight)}px`;
-      console.log(`📐 height=${contentHeight}px, marginBottom=-${Math.round(contentHeight - scaledHeight)}px`);
-    } else {
+    if (contentHeight <= maxHeight) {
+      console.log(`✅ Zawartość mieści się - resetuję odstępy`);
+      // Resetuj do domyślnych wartości
+      menuPreview.style.setProperty('--section-margin', '48px');
+      menuPreview.style.setProperty('--item-margin', '24px');
+      menuPreview.style.setProperty('--section-padding', '30px 40px');
+      menuPreview.style.transform = 'none';
       menuPreview.style.height = 'auto';
       menuPreview.style.marginBottom = '0';
+    } else {
+      // Oblicz współczynnik zmniejszenia
+      const ratio = maxHeight / contentHeight;
+      console.log(`🔽 Zmniejszam odstępy - ratio: ${ratio.toFixed(2)}`);
+      
+      // Zmniejsz marginesy proporcjonalnie
+      const sectionMargin = Math.max(10, Math.round(48 * ratio));
+      const itemMargin = Math.max(8, Math.round(24 * ratio));
+      const sectionPadding = Math.max(15, Math.round(30 * ratio));
+      
+      console.log(`📐 Nowe odstępy: section=${sectionMargin}px, item=${itemMargin}px, padding=${sectionPadding}px`);
+      
+      menuPreview.style.setProperty('--section-margin', `${sectionMargin}px`);
+      menuPreview.style.setProperty('--item-margin', `${itemMargin}px`);
+      menuPreview.style.setProperty('--section-padding', `${sectionPadding}px ${sectionPadding + 10}px`);
+      
+      // Jeśli nadal za duże, zastosuj lekkie skalowanie
+      if (ratio < 0.7) {
+        const scale = 0.7 + (ratio - 0.7) * 0.5;
+        menuPreview.style.transform = `scale(${scale})`;
+        menuPreview.style.transformOrigin = 'top center';
+        console.log(`⚠️ Dodatkowe skalowanie: ${Math.round(scale * 100)}%`);
+      } else {
+        menuPreview.style.transform = 'none';
+      }
     }
     
     isScaling = false;
