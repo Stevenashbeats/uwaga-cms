@@ -562,7 +562,7 @@ body {
   transform-origin: center center;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   border-radius: 8px;
-  overflow: visible;
+  overflow: hidden;
   position: relative;
 }
 
@@ -610,8 +610,8 @@ body {
 .tv-screen .menu-container {
   width: 100%;
   height: 1920px;
-  max-height: none;
-  overflow: visible;
+  max-height: 1920px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

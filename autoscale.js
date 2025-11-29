@@ -31,7 +31,7 @@ function autoScaleContent() {
     const containerHeight = 1920; // Pełna wysokość kontenera
     const paddingTop = 60; // padding górny
     const paddingBottom = 60; // padding dolny
-    const safetyMargin = 40; // dodatkowy margines bezpieczeństwa
+    const safetyMargin = 80; // dodatkowy margines bezpieczeństwa (zwiększony)
     
     // Dostępna wysokość z marginesami
     const availableHeight = containerHeight - paddingTop - paddingBottom - safetyMargin;
@@ -57,8 +57,8 @@ function autoScaleContent() {
     if (contentHeight > availableHeight) {
       // Oblicz skalę aby zmieścić zawartość
       newScale = availableHeight / contentHeight;
-      // Dodatkowe zmniejszenie o 2% dla pewności
-      newScale = newScale * 0.98;
+      // Dodatkowe zmniejszenie o 5% dla pewności (zwiększone z 2%)
+      newScale = newScale * 0.95;
       console.log(`🔽 Skalowanie do ${Math.round(newScale * 100)}% (${contentHeight}px → ${Math.round(contentHeight * newScale)}px)`);
     } else {
       console.log(`✅ Zawartość mieści się bez skalowania`);
