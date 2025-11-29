@@ -618,6 +618,8 @@ body {
   align-items: center;
   box-sizing: border-box;
   padding: 0;
+  container-type: size;
+  container-name: tv-container;
 }
 
 #menu-preview {
@@ -677,9 +679,9 @@ body {
 
 .section-title {
   font-family: 'Evogria', 'Bebas Neue', sans-serif;
-  font-size: 48px;
+  font-size: clamp(24px, 2.5vw, 48px);
   letter-spacing: 1px;
-  margin-bottom: 16px;
+  margin-bottom: clamp(8px, 1vh, 16px);
   color: var(--text-dark);
 }
 
@@ -710,14 +712,14 @@ body {
 
 .item-name {
   font-family: 'Evogria', 'Bebas Neue', sans-serif;
-  font-size: 32px;
+  font-size: clamp(18px, 1.8vw, 32px);
   letter-spacing: 0.5px;
   color: var(--text-dark);
   line-height: 1.2;
 }
 
 .item-description {
-  font-size: 18px;
+  font-size: clamp(12px, 1vw, 18px);
   color: var(--text-dark);
   margin-top: 4px;
   font-weight: 400;
@@ -725,7 +727,7 @@ body {
 
 .item-price {
   font-family: 'Evogria', 'Bebas Neue', sans-serif;
-  font-size: 36px;
+  font-size: clamp(20px, 2vw, 36px);
   color: var(--text-dark);
   white-space: nowrap;
   font-weight: 400;

@@ -3,6 +3,9 @@ let currentScale = 1;
 let isScaling = false;
 
 function autoScaleContent() {
+  // WYŁĄCZONE - używamy CSS responsive design
+  console.log('⏭️ Autoscale wyłączony - używamy CSS clamp()');
+  return;
   // Sprawdź czy jesteśmy w trybie TV lub edytorze z podglądem
   const urlParams = new URLSearchParams(window.location.search);
   const isTVMode = urlParams.has('tv');
