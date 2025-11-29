@@ -415,7 +415,7 @@ async function loadStateFromURL() {
     // Określ API URL
     const apiUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:')
       ? 'http://localhost:8787/api'
-      : '/api';
+      : 'https://uwaga-kawa-cms.nashpillow.workers.dev/api';
     
     // Pobierz szczegóły TV z API (publiczny endpoint)
     const response = await fetch(`${apiUrl}/tvs/${tvid}/public`);
@@ -466,7 +466,7 @@ async function loadStateFromURL() {
         // Określ API URL
         const apiUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:')
           ? 'http://localhost:8787/api'
-          : '/api';
+          : 'https://uwaga-kawa-cms.nashpillow.workers.dev/api';
         
         // Pobierz nowe dane
         const response = await fetch(`${apiUrl}/tvs/${tvid}/public`);
