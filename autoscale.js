@@ -49,12 +49,17 @@ function autoScaleContent() {
   });
 }
 
-// Uruchom autoscale po każdej zmianie
+// Uruchom autoscale po każdej zmianie - TYLKO w trybie TV
 const originalRenderPreview = window.renderPreview;
 if (originalRenderPreview) {
   window.renderPreview = function() {
     originalRenderPreview();
-    autoScaleContent();
+    // Autoscale tylko w trybie TV
+    const urlParams = new URLSearchParams(window.location.search);
+    const isTVMode = urlParams.has('tv');
+    if (isTVMode) {
+      autoScaleContent();
+    }
   };
 }
 
