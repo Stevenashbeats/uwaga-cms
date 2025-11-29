@@ -570,6 +570,16 @@ function renderEditor() {
   if (venueNameInput) venueNameInput.value = currentTv.venueName || '';
   if (venueSubtitleInput) venueSubtitleInput.value = currentTv.venueSubtitle || '';
   
+  // Załaduj global scale
+  const globalScaleInput = document.getElementById('global-scale');
+  const scaleValueSpan = document.getElementById('scale-value');
+  if (globalScaleInput && scaleValueSpan) {
+    const scale = currentTv.globalScale || 100;
+    globalScaleInput.value = scale;
+    scaleValueSpan.textContent = scale;
+    applyGlobalScale(scale);
+  }
+  
   // Załaduj ustawienia fontów
   if (fontSectionTitleInput) fontSectionTitleInput.value = currentTv.fontSectionTitle || 48;
   if (fontItemNameInput) fontItemNameInput.value = currentTv.fontItemName || 32;
@@ -802,8 +812,9 @@ function renderPreview() {
     console.log('📊 Liczba pozycji w pierwszej sekcji:', currentTv.sections[0].items?.length || 0);
   }
   
-  // Zastosuj ustawienia fontów
+  // Zastosuj ustawienia fontów i global scale
   applyFontSettings();
+  applyGlobalScale(currentTv.globalScale || 100);
   
   menuPreview.innerHTML = "";
 
@@ -952,7 +963,7 @@ async function saveAllChanges() {
   }
 
   try {
-    // Zapisz nazwę lokalu, podtytuł i ustawienia fontów
+    // Zapisz nazwę lokalu, podtytuł, global scale i ustawienia fontów
     console.log(`📤 Zapisuję dane TV: ${currentTv.name}`);
     await authManager.apiRequest(`/tvs/${currentTv.id}`, {
       method: 'PUT',
@@ -960,6 +971,7 @@ async function saveAllChanges() {
         name: currentTv.name,
         venueName: currentTv.venueName || "",
         venueSubtitle: currentTv.venueSubtitle || "",
+        globalScale: currentTv.globalScale || 100,
         fontSectionTitle: currentTv.fontSectionTitle || 48,
         fontItemName: currentTv.fontItemName || 32,
         fontItemDescription: currentTv.fontItemDescription || 18,
@@ -1037,6 +1049,38 @@ function applyFontSettings() {
   menuPreview.style.setProperty('--font-section-note', `${currentTv.fontSectionNote || 16}px`);
 }
 
+// Collapsible sections
+function initCollapsible() {
+  const scaleHeader = document.getElementById('scale-header');
+  const scaleContent = document.getElementById('scale-content');
+  const fontsHeader = document.getElementById('fonts-header');
+  const fontsContent = document.getElementById('fonts-content');
+  
+  if (scaleHeader && scaleContent) {
+    scaleHeader.addEventListener('click', () => {
+      scaleHeader.classList.toggle('collapsed');
+      scaleContent.classList.toggle('collapsed');
+    });
+  }
+  
+  if (fontsHeader && fontsContent) {
+    fontsHeader.addEventListener('click', () => {
+      fontsHeader.classList.toggle('collapsed');
+      fontsContent.classList.toggle('collapsed');
+    });
+  }
+}
+
+// Global scale
+function applyGlobalScale(scale) {
+  const menuPreview = document.getElementById('menu-preview');
+  if (!menuPreview) return;
+  
+  // Przeskaluj wszystko przez transform
+  menuPreview.style.transform = `scale(${scale / 100})`;
+  menuPreview.style.transformOrigin = 'top center';
+}
+
 // Globalne listenery
 function attachGlobalListeners() {
   console.log('🔧 Podpinanie event listenerów...');
@@ -1044,6 +1088,23 @@ function attachGlobalListeners() {
   if (!addSectionBtn) {
     console.error('❌ addSectionBtn nie istnieje!');
     return;
+  }
+  
+  // Collapsible
+  initCollapsible();
+  
+  // Global scale slider
+  const globalScaleInput = document.getElementById('global-scale');
+  const scaleValueSpan = document.getElementById('scale-value');
+  
+  if (globalScaleInput && scaleValueSpan) {
+    globalScaleInput.addEventListener('input', (e) => {
+      const scale = parseInt(e.target.value);
+      scaleValueSpan.textContent = scale;
+      getCurrentTv().globalScale = scale;
+      applyGlobalScale(scale);
+      markAsUnsaved();
+    });
   }
   
   venueNameInput.addEventListener("input", (e) => {
