@@ -8,12 +8,23 @@ function autoScaleContent() {
   const isTVMode = urlParams.has('tv');
   
   // Autoscale tylko w trybie TV
-  if (!isTVMode) return;
+  if (!isTVMode) {
+    console.log('⏭️ Autoscale: pomijam - nie tryb TV');
+    return;
+  }
   
   const menuPreview = document.getElementById('menu-preview');
   const menuContainer = document.querySelector('.tv-screen .menu-container');
   
-  if (!menuPreview || !menuContainer || isScaling) return;
+  if (!menuPreview || !menuContainer) {
+    console.log('⏭️ Autoscale: pomijam - brak elementów');
+    return;
+  }
+  
+  if (isScaling) {
+    console.log('⏭️ Autoscale: pomijam - już skaluje');
+    return;
+  }
   
   isScaling = true;
   
@@ -49,19 +60,23 @@ function autoScaleContent() {
         newScale = availableHeight / contentHeight;
         // Dodatkowe zmniejszenie o 2% dla pewności
         newScale = newScale * 0.98;
-        console.log(`🔽 Skalowanie do ${Math.round(newScale * 100)}%`);
+        console.log(`🔽 Skalowanie do ${Math.round(newScale * 100)}% (${contentHeight}px → ${Math.round(contentHeight * newScale)}px)`);
+      } else {
+        console.log(`✅ Zawartość mieści się bez skalowania`);
       }
       
       // ZAWSZE zastosuj skalę
       currentScale = newScale;
       menuPreview.style.transformOrigin = 'top center';
       menuPreview.style.transform = `scale(${newScale})`;
+      console.log(`✨ Zastosowano transform: scale(${newScale})`);
       
       if (newScale < 1) {
         // Ustaw wysokość i ujemny margin aby zawartość nie wychodziła poza
         const scaledHeight = contentHeight * newScale;
         menuPreview.style.height = `${contentHeight}px`;
         menuPreview.style.marginBottom = `-${(contentHeight - scaledHeight)}px`;
+        console.log(`📐 Ustawiono height=${contentHeight}px, marginBottom=-${Math.round(contentHeight - scaledHeight)}px`);
       } else {
         menuPreview.style.height = 'auto';
         menuPreview.style.marginBottom = '0';
