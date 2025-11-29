@@ -1,16 +1,29 @@
-// Funkcje dla multi-TV - nadpisują funkcje z app.js
+// Funkcje dla multi-TV - WYŁĄCZONE, używamy wersji z app.js z API
 
-// Renderuj edytor
+/*
+// Renderuj edytor - STARA WERSJA, WYŁĄCZONA
 window.renderEditor = function() {
   const currentTv = getCurrentTv();
-  venueNameInput.value = currentTv.venueName;
-  venueSubtitleInput.value = currentTv.venueSubtitle;
+  if (!currentTv) {
+    console.error('❌ multi-tv renderEditor: brak currentTv');
+    return;
+  }
+  
+  // Aktualizuj selector TV
+  if (typeof updateTvSelector === 'function') {
+    updateTvSelector();
+  }
+  
+  if (venueNameInput) venueNameInput.value = currentTv.venueName || '';
+  if (venueSubtitleInput) venueSubtitleInput.value = currentTv.venueSubtitle || '';
 
-  sectionsContainer.innerHTML = "";
-  currentTv.sections.forEach((section, sectionIndex) => {
-    const card = createSectionCard(section, sectionIndex);
-    sectionsContainer.appendChild(card);
-  });
+  if (sectionsContainer) {
+    sectionsContainer.innerHTML = "";
+    currentTv.sections.forEach((section, sectionIndex) => {
+      const card = createSectionCard(section, sectionIndex);
+      sectionsContainer.appendChild(card);
+    });
+  }
 };
 
 // Utwórz kartę sekcji
@@ -28,6 +41,9 @@ window.createSectionCard = function(section, sectionIndex) {
   titleInput.addEventListener("input", (e) => {
     currentTv.sections[sectionIndex].title = e.target.value;
     renderPreview();
+    if (typeof window.saveUserData === 'function') {
+      window.saveUserData();
+    }
   });
 
   const actions = document.createElement("div");
@@ -41,6 +57,9 @@ window.createSectionCard = function(section, sectionIndex) {
     currentTv.sections.splice(sectionIndex, 1);
     renderEditor();
     renderPreview();
+    if (typeof window.saveUserData === 'function') {
+      window.saveUserData();
+    }
   });
 
   actions.appendChild(deleteBtn);
@@ -60,6 +79,9 @@ window.createSectionCard = function(section, sectionIndex) {
   noteInput.addEventListener("input", (e) => {
     currentTv.sections[sectionIndex].note = e.target.value;
     renderPreview();
+    if (typeof window.saveUserData === 'function') {
+      window.saveUserData();
+    }
   });
   noteField.appendChild(noteLabel);
   noteField.appendChild(noteInput);
@@ -88,6 +110,9 @@ window.createSectionCard = function(section, sectionIndex) {
     });
     renderEditor();
     renderPreview();
+    if (typeof window.saveUserData === 'function') {
+      window.saveUserData();
+    }
   });
   card.appendChild(addItemBtn);
 
@@ -111,6 +136,9 @@ window.createItemRow = function(item, sectionIndex, itemIndex) {
   nameInput.addEventListener("input", (e) => {
     currentTv.sections[sectionIndex].items[itemIndex].name = e.target.value;
     renderPreview();
+    if (typeof window.saveUserData === 'function') {
+      window.saveUserData();
+    }
   });
 
   const descInput = document.createElement("input");
@@ -121,6 +149,9 @@ window.createItemRow = function(item, sectionIndex, itemIndex) {
   descInput.addEventListener("input", (e) => {
     currentTv.sections[sectionIndex].items[itemIndex].description = e.target.value;
     renderPreview();
+    if (typeof window.saveUserData === 'function') {
+      window.saveUserData();
+    }
   });
 
   inputs.appendChild(nameInput);
@@ -134,6 +165,9 @@ window.createItemRow = function(item, sectionIndex, itemIndex) {
   priceInput.addEventListener("input", (e) => {
     currentTv.sections[sectionIndex].items[itemIndex].price = e.target.value;
     renderPreview();
+    if (typeof window.saveUserData === 'function') {
+      window.saveUserData();
+    }
   });
 
   const deleteBtn = document.createElement("button");
@@ -144,6 +178,9 @@ window.createItemRow = function(item, sectionIndex, itemIndex) {
     currentTv.sections[sectionIndex].items.splice(itemIndex, 1);
     renderEditor();
     renderPreview();
+    if (typeof window.saveUserData === 'function') {
+      window.saveUserData();
+    }
   });
 
   row.appendChild(inputs);
@@ -179,119 +216,119 @@ window.renderPreview = function() {
   }
   menuPreview.appendChild(header);
 
-  // Sekcje
-  currentTv.sections.forEach((section) => {
-    const sectionEl = document.createElement("div");
-    sectionEl.className = "menu-section";
+  // Sprawdź theme
+  const theme = window.authManager ? authManager.getTheme() : 'kawa';
+  
+  if (theme === 'piwna') {
+    // Dla theme piwna: tytuł główny + wszystkie sekcje w jednym boxie
+    const mainTitle = document.createElement("div");
+    mainTitle.className = "section-title piwna-main-title";
+    mainTitle.textContent = "PRZEKĄSKI I JEDZENIE";
+    menuPreview.appendChild(mainTitle);
+    
+    const mainBox = document.createElement("div");
+    mainBox.className = "section-box piwna-main-box";
+    
+    currentTv.sections.forEach((section, index) => {
+      const title = document.createElement("div");
+      title.className = "section-title piwna-item-title";
+      title.textContent = section.title;
+      mainBox.appendChild(title);
 
-    const title = document.createElement("div");
-    title.className = "section-title";
-    title.textContent = section.title;
-    sectionEl.appendChild(title);
+      section.items.forEach((item) => {
+        if (!item.name && !item.price) return;
 
-    const box = document.createElement("div");
-    box.className = "section-box";
+        const itemEl = document.createElement("div");
+        itemEl.className = "menu-item";
 
-    section.items.forEach((item) => {
-      if (!item.name && !item.price) return;
+        const info = document.createElement("div");
+        info.className = "item-info";
 
-      const itemEl = document.createElement("div");
-      itemEl.className = "menu-item";
+        const name = document.createElement("div");
+        name.className = "item-name";
+        name.textContent = item.name || "Nazwa pozycji";
+        info.appendChild(name);
 
-      const info = document.createElement("div");
-      info.className = "item-info";
+        if (section.note) {
+          const desc = document.createElement("div");
+          desc.className = "item-description";
+          desc.textContent = section.note;
+          info.appendChild(desc);
+        }
 
-      const name = document.createElement("div");
-      name.className = "item-name";
-      name.textContent = item.name || "Nazwa pozycji";
-      info.appendChild(name);
+        const price = document.createElement("div");
+        price.className = "item-price";
+        price.textContent = item.price || "-";
 
-      if (item.description) {
-        const desc = document.createElement("div");
-        desc.className = "item-description";
-        desc.textContent = item.description;
-        info.appendChild(desc);
+        itemEl.appendChild(info);
+        itemEl.appendChild(price);
+        mainBox.appendChild(itemEl);
+      });
+    });
+    
+    menuPreview.appendChild(mainBox);
+  } else {
+    // Dla innych theme: standardowe renderowanie
+    currentTv.sections.forEach((section) => {
+      const sectionEl = document.createElement("div");
+      sectionEl.className = "menu-section";
+
+      const title = document.createElement("div");
+      title.className = "section-title";
+      title.textContent = section.title;
+      sectionEl.appendChild(title);
+
+      const box = document.createElement("div");
+      box.className = "section-box";
+
+      section.items.forEach((item) => {
+        if (!item.name && !item.price) return;
+
+        const itemEl = document.createElement("div");
+        itemEl.className = "menu-item";
+
+        const info = document.createElement("div");
+        info.className = "item-info";
+
+        const name = document.createElement("div");
+        name.className = "item-name";
+        name.textContent = item.name || "Nazwa pozycji";
+        info.appendChild(name);
+
+        if (item.description) {
+          const desc = document.createElement("div");
+          desc.className = "item-description";
+          desc.textContent = item.description;
+          info.appendChild(desc);
+        }
+
+        const price = document.createElement("div");
+        price.className = "item-price";
+        price.textContent = item.price || "-";
+
+        itemEl.appendChild(info);
+        itemEl.appendChild(price);
+        box.appendChild(itemEl);
+      });
+
+      if (section.note) {
+        const note = document.createElement("div");
+        note.className = "section-note";
+        note.textContent = section.note;
+        box.appendChild(note);
       }
 
-      const price = document.createElement("div");
-      price.className = "item-price";
-      price.textContent = item.price || "-";
-
-      itemEl.appendChild(info);
-      itemEl.appendChild(price);
-      box.appendChild(itemEl);
+      sectionEl.appendChild(box);
+      menuPreview.appendChild(sectionEl);
     });
-
-    if (section.note) {
-      const note = document.createElement("div");
-      note.className = "section-note";
-      note.textContent = section.note;
-      box.appendChild(note);
-    }
-
-    sectionEl.appendChild(box);
-    menuPreview.appendChild(sectionEl);
-  });
+  }
 };
 
-// Aktualizuj listenery
-window.attachGlobalListeners = function() {
-  venueNameInput.addEventListener("input", (e) => {
-    getCurrentTv().venueName = e.target.value;
-    renderPreview();
-  });
+*/
 
-  venueSubtitleInput.addEventListener("input", (e) => {
-    getCurrentTv().venueSubtitle = e.target.value;
-    renderPreview();
-  });
+// KONIEC STARYCH FUNKCJI - używamy wersji z app.js
 
-  addSectionBtn.addEventListener("click", () => {
-    getCurrentTv().sections.push({
-      id: `section-${Date.now()}`,
-      title: "NOWA SEKCJA",
-      note: "",
-      items: []
-    });
-    renderEditor();
-    renderPreview();
-  });
-
-  generateLinkBtn.addEventListener("click", () => {
-    // Zapisz aktualny stan do localStorage
-    if (typeof saveToLocalStorage === 'function') {
-      saveToLocalStorage();
-    }
-    
-    // Generuj prosty link z tylko tvid (dane z localStorage)
-    const url = new URL(window.location.origin + window.location.pathname);
-    url.searchParams.set("tv", "1");
-    url.searchParams.set("tvid", appState.currentTvId);
-    shareLinkInput.value = url.toString();
-    copyLinkBtn.disabled = false;
-    shareLinkInput.select();
-  });
-
-  copyLinkBtn.addEventListener("click", () => {
-    shareLinkInput.select();
-    document.execCommand("copy");
-    copyLinkBtn.textContent = "✓ Skopiowano!";
-    setTimeout(() => {
-      copyLinkBtn.textContent = "📋 Kopiuj";
-    }, 2000);
-  });
-
-  toggleModeBtn.addEventListener("click", () => {
-    previewArea.classList.toggle("fullscreen");
-    if (previewArea.classList.contains("fullscreen")) {
-      toggleModeBtn.textContent = "✏️ Edytor";
-    } else {
-      toggleModeBtn.textContent = "👁️ Podgląd";
-    }
-  });
-};
-
-// Selektor TV
+// Selektor TV - ta funkcja jest OK, zostawiamy
 function updateTvSelector() {
   const selector = document.getElementById("tv-selector");
   if (!selector) return;
@@ -309,18 +346,17 @@ function updateTvSelector() {
 
 // Inicjalizacja TV managera
 window.addEventListener('DOMContentLoaded', () => {
+  // Wywołaj init() z app.js
+  if (typeof window.init === 'function') {
+    window.init();
+  }
+  
   const tvSelector = document.getElementById("tv-selector");
   const params = new URLSearchParams(window.location.search);
   const isTVMode = params.get("tv") === "1";
   
   if (tvSelector && !isTVMode) {
-    updateTvSelector();
-    
-    // Wyrenderuj pierwszy telewizor od razu
-    setTimeout(() => {
-      renderEditor();
-      renderPreview();
-    }, 100);
+    // Nie wywołuj updateTvSelector tutaj - zostanie wywołany przez loadUserData
     
     tvSelector.addEventListener("change", (e) => {
       setCurrentTv(e.target.value);

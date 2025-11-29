@@ -1,34 +1,52 @@
 // Automatyczne skalowanie zawartości do 1080x1920px
+let currentScale = 1;
+let isScaling = false;
+
 function autoScaleContent() {
+  // Sprawdź czy jesteśmy w trybie TV
+  const urlParams = new URLSearchParams(window.location.search);
+  const isTVMode = urlParams.has('tv');
+  
+  // Autoscale tylko w trybie TV
+  if (!isTVMode) return;
+  
   const menuPreview = document.getElementById('menu-preview');
   const menuContainer = document.querySelector('.tv-screen .menu-container');
   
-  if (!menuPreview || !menuContainer) return;
+  if (!menuPreview || !menuContainer || isScaling) return;
   
-  // Resetuj transform
-  menuPreview.style.transform = 'scale(1)';
-  menuPreview.style.transformOrigin = 'top center';
+  isScaling = true;
   
-  // Poczekaj na render
-  setTimeout(() => {
+  // Użyj requestAnimationFrame dla płynności
+  requestAnimationFrame(() => {
     const containerHeight = 1920; // Pełna wysokość kontenera
     const contentHeight = menuPreview.scrollHeight;
     
+    let newScale = 1;
+    
     if (contentHeight > containerHeight) {
-      // Oblicz skalę
-      const scale = containerHeight / contentHeight;
-      menuPreview.style.transform = `scale(${scale})`;
-      
-      // Dostosuj wysokość kontenera
-      const scaledHeight = contentHeight * scale;
-      menuPreview.style.height = `${contentHeight}px`;
-      menuPreview.style.marginBottom = `${(contentHeight - scaledHeight)}px`;
-    } else {
-      menuPreview.style.transform = 'scale(1)';
-      menuPreview.style.height = 'auto';
-      menuPreview.style.marginBottom = '0';
+      // Oblicz nową skalę
+      newScale = containerHeight / contentHeight;
     }
-  }, 100);
+    
+    // Zastosuj skalę tylko jeśli się zmieniła
+    if (Math.abs(newScale - currentScale) > 0.001) {
+      currentScale = newScale;
+      menuPreview.style.transformOrigin = 'top center';
+      menuPreview.style.transform = `scale(${newScale})`;
+      
+      if (newScale < 1) {
+        const scaledHeight = contentHeight * newScale;
+        menuPreview.style.height = `${contentHeight}px`;
+        menuPreview.style.marginBottom = `${(contentHeight - scaledHeight)}px`;
+      } else {
+        menuPreview.style.height = 'auto';
+        menuPreview.style.marginBottom = '0';
+      }
+    }
+    
+    isScaling = false;
+  });
 }
 
 // Uruchom autoscale po każdej zmianie

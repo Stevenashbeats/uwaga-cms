@@ -30,52 +30,64 @@ function loadFromLocalStorage() {
   return false;
 }
 
-// Nasłuchuj zmian w localStorage (synchronizacja między kartami)
+// Nasłuchuj zmian w localStorage (synchronizacja między kartami) - TYLKO DLA TV
 window.addEventListener('storage', (e) => {
   if (e.key === 'uwaga-kawa-menu-data') {
-    console.log('Wykryto zmianę danych - odświeżanie...');
-    loadFromLocalStorage();
-    
     const params = new URLSearchParams(window.location.search);
     const isTVMode = params.get("tv") === "1";
     
+    // Tylko tryb TV odświeża się automatycznie
     if (isTVMode) {
-      // Tryb TV - tylko odśwież podgląd
+      console.log('Wykryto zmianę danych - odświeżanie TV...');
+      loadFromLocalStorage();
       if (typeof renderPreview === 'function') {
         renderPreview();
-      }
-    } else {
-      // Tryb edytora - odśwież edytor i podgląd
-      if (typeof renderEditor === 'function') {
-        renderEditor();
-      }
-      if (typeof renderPreview === 'function') {
-        renderPreview();
-      }
-      if (typeof updateTvSelector === 'function') {
-        updateTvSelector();
       }
     }
   }
 });
 
-// Auto-save przy każdej zmianie
-let saveTimeout;
-function autoSave() {
-  clearTimeout(saveTimeout);
-  saveTimeout = setTimeout(() => {
-    saveToLocalStorage();
-  }, 500); // Debounce 500ms
+// Śledzenie zmian
+let hasUnsavedChanges = false;
+
+function markAsChanged() {
+  hasUnsavedChanges = true;
+  updateSaveButton();
 }
 
-// Nadpisz funkcje renderowania, żeby zapisywały stan
-const originalRenderPreview = window.renderPreview;
-if (originalRenderPreview) {
-  window.renderPreview = function() {
-    originalRenderPreview();
-    autoSave();
-  };
+function markAsSaved() {
+  hasUnsavedChanges = false;
+  updateSaveButton();
 }
+
+function updateSaveButton() {
+  const saveBtn = document.getElementById('save-btn');
+  const saveInfo = document.getElementById('save-info');
+  
+  if (saveBtn) {
+    if (hasUnsavedChanges) {
+      saveBtn.classList.add('has-changes');
+      saveBtn.textContent = '💾 Zapisz zmiany';
+    } else {
+      saveBtn.classList.remove('has-changes');
+      saveBtn.textContent = '✓ Zapisano';
+    }
+  }
+  
+  if (saveInfo) {
+    if (hasUnsavedChanges) {
+      saveInfo.textContent = 'Niezapisane zmiany';
+      saveInfo.style.color = '#ff9800';
+    } else {
+      saveInfo.textContent = 'Wszystko zapisane';
+      saveInfo.style.color = '#4caf50';
+    }
+  }
+}
+
+// Eksportuj funkcje
+window.markAsChanged = markAsChanged;
+window.markAsSaved = markAsSaved;
 
 // Generuj unikalne linki dla każdego TV
 function generateTvLink(tvId) {
@@ -104,8 +116,23 @@ window.addEventListener('DOMContentLoaded', () => {
     appState.currentTvId = tvid;
   }
   
-  // Zapisz początkowy stan
-  saveToLocalStorage();
+  // Obsługa przycisku Zapisz
+  const saveBtn = document.getElementById('save-btn');
+  if (saveBtn && !isTVMode) {
+    saveBtn.addEventListener('click', () => {
+      saveToLocalStorage();
+      markAsSaved();
+      
+      // Pokaż feedback
+      saveBtn.textContent = '✓ Zapisano!';
+      setTimeout(() => {
+        updateSaveButton();
+      }, 2000);
+    });
+    
+    // Początkowy stan
+    markAsSaved();
+  }
 });
 
 // Eksportuj funkcje

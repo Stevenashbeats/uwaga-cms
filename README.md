@@ -1,4 +1,208 @@
-# uwaga kawa menu editor
+# UWAGA KAWA Menu Editor v2.0
+
+System CMS do zarządzania menu dla wielu lokali z niezależnymi telewizorami i układami.
+
+## 🏗️ Architektura
+
+### Backend (Cloudflare Workers)
+- **D1 Database** - Relacyjna baza danych SQL
+- **R2 Storage** - Przechowywanie obrazów (loga, zdjęcia)
+- **Workers** - Serverless API endpoints
+- **KV** - Sesje użytkowników (opcjonalne)
+
+### Frontend
+- Vanilla JavaScript
+- Responsive design
+- Multi-theme support (Kawa, Norblin, Piwna)
+
+## 🚀 Quick Start
+
+### 1. Setup Backend
+
+Szczegółowe instrukcje w [SETUP-DATABASE.md](./SETUP-DATABASE.md)
+
+```bash
+# Zainstaluj Wrangler CLI
+npm install -g wrangler
+
+# Zaloguj się do Cloudflare
+wrangler login
+
+# Utwórz bazę danych
+wrangler d1 create uwaga-kawa-db
+
+# Zaktualizuj wrangler.toml z database_id
+
+# Inicjalizuj schema
+wrangler d1 execute uwaga-kawa-db --file=./database/schema.sql --remote
+
+# Utwórz R2 bucket
+wrangler r2 bucket create uwaga-kawa-assets
+
+# Zainstaluj zależności
+npm install
+
+# Uruchom lokalnie
+npm run dev
+
+# Deploy
+npm run deploy
+```
+
+### 2. Domyślni Użytkownicy
+
+Po inicjalizacji bazy danych dostępni są:
+
+| Lokal | Login | Hasło | Theme |
+|-------|-------|-------|-------|
+| UWAGA KAWA | kawa | kawa | kawa |
+| Norblin | norblin | norblin | norblin |
+| UWAGA PIWO | piwna | piwna | piwna |
+
+⚠️ **Zmień hasła w produkcji!**
+
+## 📁 Struktura Projektu
+
+```
+uwaga-kawa-cms/
+├── database/
+│   └── schema.sql          # Schema bazy danych
+├── src/
+│   ├── worker.js           # Cloudflare Worker (API)
+│   └── api-client.js       # Frontend API client
+├── pictures/               # Obrazy (loga)
+├── font/                   # Czcionki
+├── index.html             # Główna strona
+├── app.js                 # Logika aplikacji
+├── auth.js                # Autentykacja (legacy)
+├── style.css              # Style (multi-theme)
+├── wrangler.toml          # Konfiguracja Cloudflare
+├── package.json           # Zależności
+└── SETUP-DATABASE.md      # Instrukcje setup
+
+```
+
+## 🎨 Themes
+
+System wspiera różne motywy dla każdego lokalu:
+
+### Kawa (theme: 'kawa')
+- Jasne tło z kropkami
+- Czarna czcionka Evogria
+- Logo UWAGA KAWA
+
+### Norblin (theme: 'norblin')
+- Do skonfigurowania
+
+### Piwna (theme: 'piwna')
+- Czarne tło
+- Żółte akcenty (#fdb616)
+- Białe teksty
+- Logo UWAGA PIWO
+- Czcionka Barlow Condensed dla opisów
+
+## 🔌 API Endpoints
+
+### Auth
+```
+POST /api/auth/login
+Body: { username, password }
+Response: { token, user }
+```
+
+### TVs
+```
+GET    /api/tvs              - Lista TV
+GET    /api/tvs/:id          - Szczegóły TV
+POST   /api/tvs              - Utwórz TV
+PUT    /api/tvs/:id          - Aktualizuj TV
+DELETE /api/tvs/:id          - Usuń TV
+```
+
+### Sections
+```
+POST   /api/tvs/:tvId/sections    - Utwórz sekcję
+PUT    /api/sections/:id          - Aktualizuj sekcję
+DELETE /api/sections/:id          - Usuń sekcję
+```
+
+### Items
+```
+POST   /api/sections/:sectionId/items  - Utwórz pozycję
+PUT    /api/items/:id                  - Aktualizuj pozycję
+DELETE /api/items/:id                  - Usuń pozycję
+```
+
+### TV Links (publiczne linki)
+```
+POST /api/tvs/:tvId/link    - Generuj link
+GET  /api/tv/:token         - Pobierz TV (publiczne)
+```
+
+### Upload
+```
+POST /api/upload
+Body: FormData with 'file'
+Response: { url }
+```
+
+## 🔐 Bezpieczeństwo
+
+Obecna wersja używa prostego auth dla development.
+
+**TODO dla produkcji:**
+- [ ] Bcrypt hash dla haseł
+- [ ] Prawdziwe JWT tokeny
+- [ ] Rate limiting
+- [ ] HTTPS only
+- [ ] CORS dla konkretnych domen
+- [ ] Input validation
+- [ ] SQL injection protection (prepared statements ✅)
+
+## 💰 Koszty
+
+Cloudflare Free Tier:
+- Workers: 100,000 req/day ✅
+- D1: 5GB storage, 5M reads/day ✅
+- R2: 10GB storage ✅
+
+**Dla małego projektu = DARMOWE! 🎉**
+
+## 🛠️ Development
+
+```bash
+# Lokalny development
+npm run dev
+
+# Deploy do produkcji
+npm run deploy
+
+# Sprawdź logi
+wrangler tail
+
+# Wykonaj query na bazie
+wrangler d1 execute uwaga-kawa-db --command="SELECT * FROM venues"
+```
+
+## 📝 TODO
+
+- [ ] Migracja frontendu do API
+- [ ] Prawdziwy JWT auth
+- [ ] Drag & drop dla zmiany kolejności
+- [ ] Upload logo przez UI
+- [ ] Eksport/import menu (JSON)
+- [ ] Historia zmian (audit log)
+- [ ] Multi-language support
+- [ ] Dark mode dla edytora
+- [ ] Mobile app (PWA)
+
+## 📄 Licencja
+
+Proprietary - UWAGA KAWA
+
+## 👥 Autorzy
+
+Developed with ❤️ for UWAGA KAWA, Norblin & UWAGA PIWO
 
 System zarządzania menu kawiarni zoptymalizowany pod wyświetlanie na telewizorach pionowych **1080x1920px**.  
 **Obsługuje wiele telewizorów** - możesz tworzyć osobne menu dla różnych TV (np. napoje, jedzenie).

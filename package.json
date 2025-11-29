@@ -1,0 +1,19 @@
+{
+  "name": "uwaga-kawa-cms",
+  "version": "2.0.0",
+  "description": "Multi-venue menu CMS with Cloudflare Workers",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute uwaga-kawa-db --file=./database/schema.sql",
+    "db:migrations": "wrangler d1 migrations apply uwaga-kawa-db"
+  },
+  "dependencies": {
+    "itty-router": "^4.0.0",
+    "nanoid": "^5.0.0"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

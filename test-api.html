@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test API</title>
+  <style>
+    body {
+      font-family: monospace;
+      padding: 20px;
+      background: #1a1a1a;
+      color: #fff;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+    }
+    pre {
+      background: #2a2a2a;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Test API - UWAGA KAWA CMS</h1>
+  
+  <div>
+    <h2>1. Login</h2>
+    <button onclick="testLogin()">Login jako piwna</button>
+    <pre id="login-result"></pre>
+  </div>
+
+  <div>
+    <h2>2. Get TVs</h2>
+    <button onclick="getTVs()">Pobierz TV</button>
+    <pre id="tvs-result"></pre>
+  </div>
+
+  <div>
+    <h2>3. Add Section</h2>
+    <button onclick="addSection()">Dodaj sekcję do pierwszego TV</button>
+    <pre id="section-result"></pre>
+  </div>
+
+  <div>
+    <h2>4. Add Item</h2>
+    <button onclick="addItem()">Dodaj pozycję do ostatniej sekcji</button>
+    <pre id="item-result"></pre>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:8787/api';
+    let token = null;
+    let currentTvId = null;
+    let lastSectionId = null;
+
+    async function testLogin() {
+      try {
+        const response = await fetch(`${API_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: 'piwna', password: 'piwna' })
+        });
+        const data = await response.json();
+        token = data.token;
+        document.getElementById('login-result').textContent = JSON.stringify(data, null, 2);
+        console.log('Login success:', data);
+      } catch (error) {
+        document.getElementById('login-result').textContent = 'Error: ' + error.message;
+        console.error('Login error:', error);
+      }
+    }
+
+    async function getTVs() {
+      if (!token) {
+        alert('Najpierw się zaloguj!');
+        return;
+      }
+      try {
+        const response = await fetch(`${API_URL}/tvs`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        if (data.length > 0) {
+          currentTvId = data[0].id;
+        }
+        document.getElementById('tvs-result').textContent = JSON.stringify(data, null, 2);
+        console.log('TVs:', data);
+      } catch (error) {
+        document.getElementById('tvs-result').textContent = 'Error: ' + error.message;
+        console.error('TVs error:', error);
+      }
+    }
+
+    async function addSection() {
+      if (!token || !currentTvId) {
+        alert('Najpierw się zaloguj i pobierz TV!');
+        return;
+      }
+      try {
+        const response = await fetch(`${API_URL}/tvs/${currentTvId}/sections`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            title: 'TEST SEKCJA',
+            note: 'Test note'
+          })
+        });
+        const data = await response.json();
+        lastSectionId = data.id;
+        document.getElementById('section-result').textContent = JSON.stringify(data, null, 2);
+        console.log('Section added:', data);
+      } catch (error) {
+        document.getElementById('section-result').textContent = 'Error: ' + error.message;
+        console.error('Section error:', error);
+      }
+    }
+
+    async function addItem() {
+      if (!token || !lastSectionId) {
+        alert('Najpierw dodaj sekcję!');
+        return;
+      }
+      try {
+        const response = await fetch(`${API_URL}/sections/${lastSectionId}/items`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            name: 'TEST POZYCJA',
+            description: 'Test opis',
+            price: '99'
+          })
+        });
+        const data = await response.json();
+        document.getElementById('item-result').textContent = JSON.stringify(data, null, 2);
+        console.log('Item added:', data);
+      } catch (error) {
+        document.getElementById('item-result').textContent = 'Error: ' + error.message;
+        console.error('Item error:', error);
+      }
+    }
+  </script>
+</body>
+</html>

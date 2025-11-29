@@ -7,23 +7,57 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Panel logowania -->
+  <div id="login-panel" class="login-panel">
+    <div class="login-container">
+      <img src="pictures/UWAGA WHITE.svg" alt="Logo" class="login-logo" />
+      <h1>Logowanie</h1>
+      <form id="login-form">
+        <div class="login-field">
+          <label for="login-username">Login</label>
+          <input type="text" id="login-username" required autocomplete="username" />
+        </div>
+        <div class="login-field">
+          <label for="login-password">Hasło</label>
+          <input type="password" id="login-password" required autocomplete="current-password" />
+        </div>
+        <p id="login-error" class="login-error"></p>
+        <button type="submit" class="login-btn">Zaloguj się</button>
+      </form>
+    </div>
+  </div>
+
   <div id="app">
     <!-- Panel edytora -->
     <aside class="editor-sidebar">
       <div class="editor-header">
-        <img src="pictures/UWAGA WHITE.svg" alt="UWAGA KAWA" class="editor-logo" />
-        <button id="toggle-mode-btn" class="mode-btn">👁️ Podgląd</button>
+        <div class="header-left">
+          <img src="pictures/UWAGA WHITE.svg" alt="UWAGA KAWA" class="editor-logo" />
+          <span id="user-display-name" class="user-name"></span>
+        </div>
+        <div class="header-right">
+          <button id="logout-btn" class="logout-btn" style="display:none;">Wyloguj</button>
+        </div>
       </div>
 
       <div class="editor-content">
         <!-- Wybór telewizora -->
         <section class="editor-section">
-          <h3>Wybierz telewizor</h3>
-          <select id="tv-selector" class="tv-select"></select>
+          <div class="section-header">
+            <h3>Telewizory</h3>
+            <button id="add-tv-btn" class="add-btn" title="Dodaj nowy telewizor">+ Nowy TV</button>
+          </div>
+          <div class="tv-manager">
+            <select id="tv-selector" class="tv-select"></select>
+            <div class="tv-actions">
+              <button id="rename-tv-btn" class="icon-btn" title="Zmień nazwę">✏️</button>
+              <button id="delete-tv-btn" class="icon-btn" title="Usuń telewizor">🗑️</button>
+            </div>
+          </div>
         </section>
 
-        <!-- Ustawienia ogólne -->
-        <section class="editor-section">
+        <!-- Ustawienia ogólne - UKRYTE (do późniejszego rozwinięcia) -->
+        <section class="editor-section" style="display: none;">
           <h3>Ustawienia ogólne</h3>
           <div class="field">
             <label>Nazwa lokalu</label>
@@ -47,13 +81,13 @@
         <!-- Zapisz zmiany -->
         <section class="editor-section">
           <button id="save-btn" class="primary-btn save-btn">💾 Zapisz zmiany</button>
-          <p class="save-info" id="save-info">Niezapisane zmiany</p>
+          <p class="save-info" id="save-info">Kliknij "Zapisz zmiany" aby zapisać do bazy danych</p>
         </section>
 
         <!-- Linki dla telewizorów -->
         <section class="editor-section share-section">
           <h3>Linki dla telewizorów</h3>
-          <p class="info-text">Każdy TV ma swój unikalny link. Kliknij "Zapisz zmiany" aby zaktualizować telewizory.</p>
+          <p class="info-text">Każdy TV ma swój unikalny link do wyświetlania menu.</p>
           
           <div class="tv-link-group">
             <label>📺 TV 1 - Napoje</label>
@@ -77,6 +111,11 @@
         <button id="copy-link-btn" style="display:none"></button>
         <button id="generate-link-btn" style="display:none"></button>
       </div>
+      
+      <!-- Copyright -->
+      <div class="editor-footer">
+        <p>© Rezone Group Sp. z o.o. 2025 — All rights reserved.</p>
+      </div>
     </aside>
 
     <!-- Podgląd menu -->
@@ -89,9 +128,10 @@
     </main>
   </div>
 
+  <script src="auth.js"></script>
   <script src="app.js"></script>
   <script src="multi-tv-functions.js"></script>
-  <script src="sync-system.js"></script>
+  <!-- <script src="sync-system.js"></script> WYŁĄCZONE - używamy API -->
   <script src="tv-links.js"></script>
   <script src="autoscale.js"></script>
   <script src="zoom-controls.js"></script>

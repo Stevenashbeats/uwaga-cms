@@ -3,3 +3,12 @@ node_modules/
 .env
 .vscode/
 *.log
+
+# Wrangler
+.wrangler/
+.dev.vars
+wrangler.toml.local
+
+# Build
+dist/
+.cache/

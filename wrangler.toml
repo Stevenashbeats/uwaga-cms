@@ -1,0 +1,24 @@
+name = "uwaga-kawa-cms"
+main = "src/worker.js"
+compatibility_date = "2024-11-01"
+
+# D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "uwaga-kawa-db"
+database_id = "local-db" # Dla lokalnego developmentu
+
+# R2 Storage dla obrazów
+[[r2_buckets]]
+binding = "ASSETS"
+bucket_name = "uwaga-kawa-assets"
+
+# KV dla sesji (opcjonalnie)
+[[kv_namespaces]]
+binding = "SESSIONS"
+id = "your-kv-id-here"
+
+# Zmienne środowiskowe
+[vars]
+ENVIRONMENT = "production"
+JWT_SECRET = "your-secret-key-change-in-production"

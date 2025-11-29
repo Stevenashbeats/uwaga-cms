@@ -12,8 +12,8 @@ function initZoomControls() {
   
   if (!previewArea || !tvScreen) return;
   
-  // Wyśrodkuj na start
-  centerPreview();
+  // Nie wyśrodkowuj automatycznie - app.js zrobi to po załadowaniu danych
+  // centerPreview();
   
   // Zoom za pomocą scroll (Ctrl/Cmd + scroll lub pinch)
   previewArea.addEventListener('wheel', (e) => {
@@ -82,15 +82,29 @@ function centerPreview() {
   panX = 0;
   panY = 0;
   
-  // Oblicz zoom, żeby zmieścić w oknie
-  const areaWidth = previewArea.clientWidth;
-  const areaHeight = previewArea.clientHeight;
+  // Pobierz rzeczywiste wymiary obszaru podglądu
+  const areaRect = previewArea.getBoundingClientRect();
+  const areaWidth = areaRect.width;
+  const areaHeight = areaRect.height;
+  
+  // Wymiary TV (1080x1920)
   const screenWidth = 1080;
   const screenHeight = 1920;
   
-  const zoomX = (areaWidth - 40) / screenWidth;
-  const zoomY = (areaHeight - 40) / screenHeight;
-  currentZoom = Math.min(zoomX, zoomY, 1);
+  // Oblicz zoom dla szerokości i wysokości z marginesem
+  const marginX = 40; // 20px z każdej strony
+  const marginY = 40; // 20px góra/dół
+  
+  const zoomX = (areaWidth - marginX) / screenWidth;
+  const zoomY = (areaHeight - marginY) / screenHeight;
+  
+  // Wybierz mniejszy zoom aby zmieścić całość
+  currentZoom = Math.min(zoomX, zoomY);
+  
+  // Ogranicz zoom do rozsądnych wartości (min 10%, max 100%)
+  currentZoom = Math.max(0.1, Math.min(currentZoom, 1.0));
+  
+  console.log(`📐 Obliczony zoom: ${Math.round(currentZoom * 100)}% (obszar: ${Math.round(areaWidth)}x${Math.round(areaHeight)})`);
   
   tvScreen.style.transition = 'transform 0.3s ease';
   updateTransform();
