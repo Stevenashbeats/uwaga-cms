@@ -773,6 +773,12 @@ function renderPreview() {
     return;
   }
   
+  console.log('🎨 renderPreview - currentTv:', currentTv);
+  console.log('📊 Liczba sekcji:', currentTv.sections?.length || 0);
+  if (currentTv.sections && currentTv.sections.length > 0) {
+    console.log('📊 Liczba pozycji w pierwszej sekcji:', currentTv.sections[0].items?.length || 0);
+  }
+  
   menuPreview.innerHTML = "";
 
   // Header z logo
