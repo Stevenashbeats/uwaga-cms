@@ -6,17 +6,7 @@ compatibility_date = "2024-11-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "uwaga-kawa-db"
-database_id = "local-db" # Dla lokalnego developmentu
-
-# R2 Storage dla obrazów
-[[r2_buckets]]
-binding = "ASSETS"
-bucket_name = "uwaga-kawa-assets"
-
-# KV dla sesji (opcjonalnie)
-[[kv_namespaces]]
-binding = "SESSIONS"
-id = "your-kv-id-here"
+database_id = "436b1735-7492-457d-a43c-db7e7d4132c3"
 
 # Zmienne środowiskowe
 [vars]

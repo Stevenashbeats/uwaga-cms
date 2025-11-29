@@ -1,7 +1,7 @@
 // System autentykacji z API
 const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:')
   ? 'http://localhost:8787/api'
-  : 'https://api.uwaga-kawa.com/api';
+  : 'https://uwaga-kawa-cms.nashpillow.workers.dev/api';
 
 class AuthManager {
   constructor() {
