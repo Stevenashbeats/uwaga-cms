@@ -36,34 +36,36 @@ function autoScaleContent() {
     // Dostępna wysokość z marginesami
     const availableHeight = containerHeight - paddingTop - paddingBottom - safetyMargin;
     
-    // Pobierz rzeczywistą wysokość zawartości (przed skalowaniem)
-    menuPreview.style.transform = 'scale(1)';
-    menuPreview.style.height = 'auto';
+    // Pobierz rzeczywistą wysokość zawartości BEZ resetowania transform
+    // Jeśli jest już skalowane, podziel przez currentScale aby dostać oryginalną wysokość
+    let contentHeight = Math.max(
+      menuPreview.scrollHeight,
+      menuPreview.offsetHeight,
+      menuPreview.getBoundingClientRect().height
+    );
     
-    // Poczekaj na przeliczenie layoutu
-    setTimeout(() => {
-      const contentHeight = Math.max(
-        menuPreview.scrollHeight,
-        menuPreview.offsetHeight,
-        menuPreview.getBoundingClientRect().height
-      );
+    // Jeśli jest już skalowane, oblicz oryginalną wysokość
+    if (currentScale !== 1 && currentScale > 0) {
+      contentHeight = contentHeight / currentScale;
+    }
+    
+    console.log(`📏 Autoscale: available=${availableHeight}px, content=${contentHeight}px (currentScale=${currentScale})`);
+    
+    let newScale = 1;
       
-      console.log(`📏 Autoscale: available=${availableHeight}px, content=${contentHeight}px`);
-      
-      let newScale = 1;
-      
-      // ZAWSZE skaluj jeśli zawartość jest większa niż dostępna wysokość
-      if (contentHeight > availableHeight) {
-        // Oblicz skalę aby zmieścić zawartość
-        newScale = availableHeight / contentHeight;
-        // Dodatkowe zmniejszenie o 2% dla pewności
-        newScale = newScale * 0.98;
-        console.log(`🔽 Skalowanie do ${Math.round(newScale * 100)}% (${contentHeight}px → ${Math.round(contentHeight * newScale)}px)`);
-      } else {
-        console.log(`✅ Zawartość mieści się bez skalowania`);
-      }
-      
-      // ZAWSZE zastosuj skalę
+    // ZAWSZE skaluj jeśli zawartość jest większa niż dostępna wysokość
+    if (contentHeight > availableHeight) {
+      // Oblicz skalę aby zmieścić zawartość
+      newScale = availableHeight / contentHeight;
+      // Dodatkowe zmniejszenie o 2% dla pewności
+      newScale = newScale * 0.98;
+      console.log(`🔽 Skalowanie do ${Math.round(newScale * 100)}% (${contentHeight}px → ${Math.round(contentHeight * newScale)}px)`);
+    } else {
+      console.log(`✅ Zawartość mieści się bez skalowania`);
+    }
+    
+    // Zastosuj skalę tylko jeśli się zmieniła (unikaj niepotrzebnych rerenderów)
+    if (Math.abs(newScale - currentScale) > 0.001) {
       currentScale = newScale;
       menuPreview.style.transformOrigin = 'top center';
       menuPreview.style.transform = `scale(${newScale})`;
@@ -79,9 +81,11 @@ function autoScaleContent() {
         menuPreview.style.height = 'auto';
         menuPreview.style.marginBottom = '0';
       }
-      
-      isScaling = false;
-    }, 50);
+    } else {
+      console.log(`⏭️ Pomijam - skala się nie zmieniła`);
+    }
+    
+    isScaling = false;
   });
 }
 
