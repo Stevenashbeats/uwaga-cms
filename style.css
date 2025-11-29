@@ -788,17 +788,20 @@ body.tv-mode .preview-area {
   height: 100vh;
   padding: 0;
   background: var(--bg-dots);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: auto;
 }
 
 body.tv-mode .preview-area .tv-screen {
   width: 1080px;
   height: 1920px;
-  max-width: 100vw;
-  max-height: 100vh;
-  transform: scale(1);
+  transform: none;
   border-radius: 0;
   box-shadow: none;
-  margin: 0;
+  margin: 0 auto;
+  flex-shrink: 0;
 }
 
 /* Responsive - zoom jest kontrolowany przez zoom-controls.js */
