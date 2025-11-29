@@ -591,6 +591,7 @@ function renderEditor() {
   const fontScaleValueSpan = document.getElementById('font-scale-value');
   if (fontScaleInput && fontScaleValueSpan) {
     const scale = currentTv.fontScale || 100;
+    console.log(`📥 Loading font scale: ${scale}%`);
     fontScaleInput.value = scale;
     fontScaleValueSpan.textContent = scale;
   }
@@ -600,6 +601,7 @@ function renderEditor() {
   const logoScaleValueSpan = document.getElementById('logo-scale-value');
   if (logoScaleInput && logoScaleValueSpan) {
     const scale = currentTv.logoScale || 100;
+    console.log(`📥 Loading logo scale: ${scale}%`);
     logoScaleInput.value = scale;
     logoScaleValueSpan.textContent = scale;
   }
@@ -992,6 +994,8 @@ async function saveAllChanges() {
   try {
     // Zapisz nazwę lokalu, podtytuł, skalowanie i ustawienia fontów
     console.log(`📤 Zapisuję dane TV: ${currentTv.name}`);
+    console.log(`📊 Font scale to save: ${currentTv.fontScale || 100}`);
+    console.log(`📊 Logo scale to save: ${currentTv.logoScale || 100}`);
     await authManager.apiRequest(`/tvs/${currentTv.id}`, {
       method: 'PUT',
       body: JSON.stringify({
@@ -1099,28 +1103,22 @@ function initCollapsible() {
   }
 }
 
-// Font scale
+// Font scale - skaluje cały kontener menu
 function applyFontScale(scale) {
   const menuPreview = document.getElementById('menu-preview');
   if (!menuPreview) return;
   
-  // Przeskaluj fonty przez CSS variable
-  const currentTv = getCurrentTv();
-  const baseFontSectionTitle = currentTv.fontSectionTitle || 32;
-  const baseFontItemName = currentTv.fontItemName || 22;
-  const baseFontItemDescription = currentTv.fontItemDescription || 12;
-  const baseFontItemPrice = currentTv.fontItemPrice || 24;
-  const baseFontSectionNote = currentTv.fontSectionNote || 11;
+  console.log(`🔤 Applying font scale: ${scale}%`);
   
-  menuPreview.style.setProperty('--font-section-title', `${baseFontSectionTitle * scale / 100}px`);
-  menuPreview.style.setProperty('--font-item-name', `${baseFontItemName * scale / 100}px`);
-  menuPreview.style.setProperty('--font-item-description', `${baseFontItemDescription * scale / 100}px`);
-  menuPreview.style.setProperty('--font-item-price', `${baseFontItemPrice * scale / 100}px`);
-  menuPreview.style.setProperty('--font-section-note', `${baseFontSectionNote * scale / 100}px`);
+  // Skaluj przez transform zamiast nadpisywać CSS variables
+  const logoScale = getCurrentTv()?.logoScale || 100;
+  menuPreview.style.transform = `scale(${scale / 100})`;
+  menuPreview.style.transformOrigin = 'top center';
 }
 
 // Logo scale
 function applyLogoScale(scale) {
+  console.log(`🖼️ Applying logo scale: ${scale}%`);
   const logos = document.querySelectorAll('.menu-logo img');
   logos.forEach(logo => {
     logo.style.transform = `scale(${scale / 100})`;
@@ -1147,8 +1145,10 @@ function attachGlobalListeners() {
   if (fontScaleInput && fontScaleValueSpan) {
     fontScaleInput.addEventListener('input', (e) => {
       const scale = parseInt(e.target.value);
+      console.log(`📝 Font scale changed to: ${scale}%`);
       fontScaleValueSpan.textContent = scale;
       getCurrentTv().fontScale = scale;
+      console.log(`💾 Saved to currentTv:`, getCurrentTv().fontScale);
       applyFontScale(scale);
       markAsUnsaved();
     });
@@ -1161,8 +1161,10 @@ function attachGlobalListeners() {
   if (logoScaleInput && logoScaleValueSpan) {
     logoScaleInput.addEventListener('input', (e) => {
       const scale = parseInt(e.target.value);
+      console.log(`📝 Logo scale changed to: ${scale}%`);
       logoScaleValueSpan.textContent = scale;
       getCurrentTv().logoScale = scale;
+      console.log(`💾 Saved to currentTv:`, getCurrentTv().logoScale);
       applyLogoScale(scale);
       markAsUnsaved();
     });
