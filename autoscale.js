@@ -3,9 +3,6 @@ let currentScale = 1;
 let isScaling = false;
 
 function autoScaleContent() {
-  // WYŁĄCZONE - używamy CSS responsive design
-  console.log('⏭️ Autoscale wyłączony - używamy CSS clamp()');
-  return;
   // Sprawdź czy jesteśmy w trybie TV lub edytorze z podglądem
   const urlParams = new URLSearchParams(window.location.search);
   const isTVMode = urlParams.has('tv');
@@ -29,30 +26,38 @@ function autoScaleContent() {
   
   isScaling = true;
   
-  // NOWE PROSTE PODEJŚCIE
+  // Płynne skalowanie w czasie rzeczywistym
   requestAnimationFrame(() => {
-    // Tymczasowo usuń transform aby zmierzyć prawdziwą wysokość
-    const oldTransform = menuPreview.style.transform;
-    menuPreview.style.transform = 'none';
+    // Usuń transition tymczasowo dla dokładnego pomiaru
+    const oldTransition = menuPreview.style.transition;
+    menuPreview.style.transition = 'none';
     
-    // Poczekaj na reflow
+    // Resetuj transform do pomiaru
+    menuPreview.style.transform = 'scale(1)';
+    menuPreview.style.height = 'auto';
+    menuPreview.style.marginBottom = '0';
+    
+    // Force reflow
     void menuPreview.offsetHeight;
     
     // Zmierz rzeczywistą wysokość
     const contentHeight = menuPreview.scrollHeight;
-    const maxHeight = 1800; // Max wysokość z marginesami
+    const maxHeight = 1800; // 1920 - 60 (top) - 60 (bottom)
     
     console.log(`📏 Autoscale: maxHeight=${maxHeight}px, contentHeight=${contentHeight}px`);
     
     let newScale = 1;
     
-    // Oblicz skalę
+    // Oblicz skalę z małym marginesem
     if (contentHeight > maxHeight) {
-      newScale = maxHeight / contentHeight;
+      newScale = (maxHeight / contentHeight) * 0.98; // 2% margines
       console.log(`🔽 Skalowanie do ${Math.round(newScale * 100)}%`);
     } else {
       console.log(`✅ Zawartość mieści się bez skalowania`);
     }
+    
+    // Przywróć transition dla płynności
+    menuPreview.style.transition = oldTransition || 'transform 0.3s ease-out, opacity 0.3s ease-in-out';
     
     // Zastosuj transform
     currentScale = newScale;
