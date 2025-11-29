@@ -26,52 +26,10 @@ function autoScaleContent() {
   
   isScaling = true;
   
-  // NOWA STRATEGIA: Zmniejszaj odstępy zamiast skalować
-  requestAnimationFrame(() => {
-    // Zmierz rzeczywistą wysokość
-    const contentHeight = menuPreview.scrollHeight;
-    const maxHeight = 1800; // 1920 - 60 (top) - 60 (bottom)
-    
-    console.log(`📏 Autoscale: maxHeight=${maxHeight}px, contentHeight=${contentHeight}px`);
-    
-    if (contentHeight <= maxHeight) {
-      console.log(`✅ Zawartość mieści się - resetuję odstępy`);
-      // Resetuj do domyślnych wartości
-      menuPreview.style.setProperty('--section-margin', '48px');
-      menuPreview.style.setProperty('--item-margin', '24px');
-      menuPreview.style.setProperty('--section-padding', '30px 40px');
-      menuPreview.style.transform = 'none';
-      menuPreview.style.height = 'auto';
-      menuPreview.style.marginBottom = '0';
-    } else {
-      // Oblicz współczynnik zmniejszenia
-      const ratio = maxHeight / contentHeight;
-      console.log(`🔽 Zmniejszam odstępy - ratio: ${ratio.toFixed(2)}`);
-      
-      // Zmniejsz marginesy proporcjonalnie
-      const sectionMargin = Math.max(10, Math.round(48 * ratio));
-      const itemMargin = Math.max(8, Math.round(24 * ratio));
-      const sectionPadding = Math.max(15, Math.round(30 * ratio));
-      
-      console.log(`📐 Nowe odstępy: section=${sectionMargin}px, item=${itemMargin}px, padding=${sectionPadding}px`);
-      
-      menuPreview.style.setProperty('--section-margin', `${sectionMargin}px`);
-      menuPreview.style.setProperty('--item-margin', `${itemMargin}px`);
-      menuPreview.style.setProperty('--section-padding', `${sectionPadding}px ${sectionPadding + 10}px`);
-      
-      // Jeśli nadal za duże, zastosuj lekkie skalowanie
-      if (ratio < 0.7) {
-        const scale = 0.7 + (ratio - 0.7) * 0.5;
-        menuPreview.style.transform = `scale(${scale})`;
-        menuPreview.style.transformOrigin = 'top center';
-        console.log(`⚠️ Dodatkowe skalowanie: ${Math.round(scale * 100)}%`);
-      } else {
-        menuPreview.style.transform = 'none';
-      }
-    }
-    
-    isScaling = false;
-  });
+  // WYŁĄCZONE - użytkownik ma pełną kontrolę przez ustawienia fontów
+  console.log('⏭️ Autoscale wyłączony - użyj ustawień fontów w edytorze');
+  isScaling = false;
+  return;
 }
 
 // Uruchom autoscale po każdej zmianie - WSZĘDZIE (TV i edytor)
