@@ -32,14 +32,23 @@ function autoScaleContent() {
 }
 
 // Uruchom autoscale po każdej zmianie
-const originalRenderPreview = window.renderPreview;
-if (originalRenderPreview) {
-  window.renderPreview = function() {
-    originalRenderPreview();
-    autoScaleContent();
-  };
-}
+// Opóźnij aby window.renderPreview było zdefiniowane
+setTimeout(() => {
+  const originalRenderPreview = window.renderPreview;
+  if (originalRenderPreview) {
+    window.renderPreview = function() {
+      originalRenderPreview();
+      autoScaleContent();
+    };
+    console.log('✅ Autoscale podpięty do renderPreview');
+  } else {
+    console.warn('⚠️ window.renderPreview nie istnieje');
+  }
+}, 100);
 
 // Uruchom przy załadowaniu
-window.addEventListener('load', autoScaleContent);
+window.addEventListener('load', () => {
+  setTimeout(autoScaleContent, 100);
+  setTimeout(autoScaleContent, 500);
+});
 window.addEventListener('resize', autoScaleContent);
