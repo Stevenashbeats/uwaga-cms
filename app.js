@@ -479,7 +479,7 @@ async function loadStateFromURL() {
     renderPreview();
     console.log('✅ renderPreview() zakończone');
     
-    // Sprawdzaj zmiany co 2 sekundy
+    // Sprawdzaj zmiany co 10 sekund (optymalizacja requestów)
     let lastDataHash = JSON.stringify(tvDetails.sections);
     
     setInterval(async () => {
@@ -572,7 +572,7 @@ async function loadStateFromURL() {
       } catch (e) {
         console.error('❌ Błąd odświeżania:', e);
       }
-    }, 2000);
+    }, 10000); // 10 sekund zamiast 2 - oszczędność 80% requestów
     
   } catch (e) {
     console.error("❌ Błąd ładowania danych TV:", e);

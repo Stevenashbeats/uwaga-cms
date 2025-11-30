@@ -177,7 +177,15 @@ router.get('/api/tvs/:id/public', async (request, env) => {
     
     tv.sections = sections.results;
     
-    return jsonResponse(tv);
+    // Dodaj cache headers - 5 sekund
+    return new Response(JSON.stringify(tv), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=5',
+        ...corsHeaders,
+      },
+    });
   } catch (error) {
     return errorResponse(error.message, 500);
   }
