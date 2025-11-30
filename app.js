@@ -621,6 +621,9 @@ function renderEditor() {
   
   // Zastosuj ustawienia fontów
   applyFontSettings();
+  
+  // Podepnij slidery skalowania (muszą być po renderze HTML)
+  attachScaleListeners();
 }
 
 // Utwórz kartę sekcji
@@ -1131,17 +1134,9 @@ function applyLogoScale(scale) {
   });
 }
 
-// Globalne listenery
-function attachGlobalListeners() {
-  console.log('🔧 Podpinanie event listenerów...');
-  
-  if (!addSectionBtn) {
-    console.error('❌ addSectionBtn nie istnieje!');
-    return;
-  }
-  
-  // Collapsible
-  initCollapsible();
+// Podepnij slidery skalowania
+function attachScaleListeners() {
+  console.log('🎚️ Podpinam slidery skalowania...');
   
   // Font scale slider
   const fontScaleInput = document.getElementById('font-scale');
@@ -1149,7 +1144,12 @@ function attachGlobalListeners() {
   
   if (fontScaleInput && fontScaleValueSpan) {
     console.log('✅ Font scale slider found, attaching listener');
-    fontScaleInput.addEventListener('input', (e) => {
+    
+    // Usuń stary listener jeśli istnieje
+    const newFontScaleInput = fontScaleInput.cloneNode(true);
+    fontScaleInput.parentNode.replaceChild(newFontScaleInput, fontScaleInput);
+    
+    newFontScaleInput.addEventListener('input', (e) => {
       const scale = parseInt(e.target.value);
       console.log(`📝 Font scale changed to: ${scale}%`);
       fontScaleValueSpan.textContent = scale;
@@ -1170,7 +1170,12 @@ function attachGlobalListeners() {
   
   if (logoScaleInput && logoScaleValueSpan) {
     console.log('✅ Logo scale slider found, attaching listener');
-    logoScaleInput.addEventListener('input', (e) => {
+    
+    // Usuń stary listener jeśli istnieje
+    const newLogoScaleInput = logoScaleInput.cloneNode(true);
+    logoScaleInput.parentNode.replaceChild(newLogoScaleInput, logoScaleInput);
+    
+    newLogoScaleInput.addEventListener('input', (e) => {
       const scale = parseInt(e.target.value);
       console.log(`📝 Logo scale changed to: ${scale}%`);
       logoScaleValueSpan.textContent = scale;
@@ -1184,6 +1189,19 @@ function attachGlobalListeners() {
     console.error('logoScaleInput:', logoScaleInput);
     console.error('logoScaleValueSpan:', logoScaleValueSpan);
   }
+}
+
+// Globalne listenery
+function attachGlobalListeners() {
+  console.log('🔧 Podpinanie event listenerów...');
+  
+  if (!addSectionBtn) {
+    console.error('❌ addSectionBtn nie istnieje!');
+    return;
+  }
+  
+  // Collapsible
+  initCollapsible();
   
   venueNameInput.addEventListener("input", (e) => {
     getCurrentTv().venueName = e.target.value;
