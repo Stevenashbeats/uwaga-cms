@@ -1233,12 +1233,13 @@ function applyLineHeight(lineHeight) {
   });
 }
 
-// Bottom margin
+// Bottom margin - podnosi menu do góry
 function applyBottomMargin(margin) {
-  console.log(`⬇️ Applying bottom margin: ${margin}px`);
+  console.log(`⬆️ Applying top offset: ${margin}px`);
   const menuPreview = document.getElementById('menu-preview');
   if (menuPreview) {
-    menuPreview.style.paddingBottom = `${margin}px`;
+    // Ujemny marginTop podnosi menu do góry
+    menuPreview.style.marginTop = `-${margin}px`;
   }
 }
 
