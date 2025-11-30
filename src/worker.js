@@ -216,7 +216,12 @@ router.put('/api/tvs/:id', async (request, env) => {
     }
     
     const { id } = request.params;
-    const { name, venueName, venueSubtitle, fontScale, logoScale, fontSectionTitle, fontItemName, fontItemDescription, fontItemPrice, fontSectionNote } = await request.json();
+    const body = await request.json();
+    const { name, venueName, venueSubtitle, fontScale, logoScale, fontSectionTitle, fontItemName, fontItemDescription, fontItemPrice, fontSectionNote } = body;
+    
+    console.log('📥 Received fontScale:', fontScale);
+    console.log('📥 Received logoScale:', logoScale);
+    console.log('📥 Full body:', body);
     
     await env.DB.prepare(
       `UPDATE tvs SET name = ?, venue_name = ?, venue_subtitle = ?, font_scale = ?, logo_scale = ?,
@@ -230,6 +235,8 @@ router.put('/api/tvs/:id', async (request, env) => {
     ).run();
     
     const tv = await env.DB.prepare('SELECT * FROM tvs WHERE id = ?').bind(id).first();
+    console.log('📤 Returning font_scale:', tv.font_scale);
+    console.log('📤 Returning logo_scale:', tv.logo_scale);
     
     return jsonResponse(tv);
   } catch (error) {
