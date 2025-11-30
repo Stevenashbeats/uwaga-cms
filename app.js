@@ -1051,6 +1051,20 @@ async function saveAllChanges() {
     console.log('✅ Wszystkie zmiany zapisane!');
     markAsSaved();
     
+    // Zaktualizuj wartości w appState z odpowiedzi API
+    console.log('🔄 Aktualizuję wartości z odpowiedzi API...');
+    if (tvUpdateResponse) {
+      currentTv.fontScale = tvUpdateResponse.font_scale || 100;
+      currentTv.logoScale = tvUpdateResponse.logo_scale || 100;
+      console.log(`✅ Zaktualizowano fontScale: ${currentTv.fontScale}`);
+      console.log(`✅ Zaktualizowano logoScale: ${currentTv.logoScale}`);
+      
+      // Zastosuj skalowanie do podglądu
+      applyFontSettings();
+      applyFontScale(currentTv.fontScale);
+      applyLogoScale(currentTv.logoScale);
+    }
+    
     // Odśwież linki TV
     if (typeof window.generateTVLinks === 'function') {
       console.log('🔗 Odświeżanie linków TV...');
