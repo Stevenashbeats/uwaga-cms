@@ -510,6 +510,13 @@ async function loadStateFromURL() {
           // Aktualizuj dane
           appState.tvs[tvid].venueName = tvDetails.venue_name || '';
           appState.tvs[tvid].venueSubtitle = tvDetails.venue_subtitle || '';
+          appState.tvs[tvid].fontScale = tvDetails.font_scale || 100;
+          appState.tvs[tvid].logoScale = tvDetails.logo_scale || 100;
+          appState.tvs[tvid].fontSectionTitle = tvDetails.font_section_title || 32;
+          appState.tvs[tvid].fontItemName = tvDetails.font_item_name || 22;
+          appState.tvs[tvid].fontItemDescription = tvDetails.font_item_description || 12;
+          appState.tvs[tvid].fontItemPrice = tvDetails.font_item_price || 24;
+          appState.tvs[tvid].fontSectionNote = tvDetails.font_section_note || 11;
           appState.tvs[tvid].sections = tvDetails.sections.map(section => ({
             id: section.id,
             title: section.title,
@@ -530,6 +537,18 @@ async function loadStateFromURL() {
             preview.style.opacity = '0';
             setTimeout(() => {
               renderPreview();
+              
+              // Zastosuj skalowanie po renderze
+              const currentTv = getCurrentTv();
+              if (currentTv) {
+                console.log('🔄 Aplikuję skalowanie po auto-refresh');
+                console.log('📊 fontScale:', currentTv.fontScale);
+                console.log('📊 logoScale:', currentTv.logoScale);
+                applyFontSettings();
+                applyFontScale(currentTv.fontScale || 100);
+                applyLogoScale(currentTv.logoScale || 100);
+              }
+              
               preview.style.opacity = '1';
               // Wywołaj autoscale po renderze
               if (typeof autoScaleContent === 'function') {
