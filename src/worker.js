@@ -229,6 +229,8 @@ router.put('/api/tvs/:id', async (request, env) => {
     
     console.log('📥 Received fontScale:', fontScale);
     console.log('📥 Received logoScale:', logoScale);
+    console.log('📥 Received lineHeight:', lineHeight);
+    console.log('📥 Received bottomMargin:', bottomMargin);
     console.log('📥 Full body:', body);
     
     await env.DB.prepare(
