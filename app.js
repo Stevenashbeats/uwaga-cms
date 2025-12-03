@@ -267,6 +267,17 @@ async function loadUserData() {
     renderEditor();
     renderPreview();
     
+    // Zastosuj załadowane wartości
+    const currentTv = getCurrentTv();
+    if (currentTv) {
+      console.log('🎨 Aplikuję załadowane wartości...');
+      applyFontSettings();
+      applyFontScale(currentTv.fontScale || 100);
+      applyLogoScale(currentTv.logoScale || 100);
+      applyLineHeight(currentTv.lineHeight || 1.2);
+      applyBottomMargin(currentTv.bottomMargin || 0);
+    }
+    
     // Generuj linki dla TV
     if (typeof window.generateTVLinks === 'function') {
       console.log('🔗 Generowanie linków TV...');
