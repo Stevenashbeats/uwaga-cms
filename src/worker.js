@@ -247,6 +247,8 @@ router.put('/api/tvs/:id', async (request, env) => {
     const tv = await env.DB.prepare('SELECT * FROM tvs WHERE id = ?').bind(id).first();
     console.log('📤 Returning font_scale:', tv.font_scale);
     console.log('📤 Returning logo_scale:', tv.logo_scale);
+    console.log('📤 Returning line_height:', tv.line_height);
+    console.log('📤 Returning bottom_margin:', tv.bottom_margin);
     
     return jsonResponse(tv);
   } catch (error) {
