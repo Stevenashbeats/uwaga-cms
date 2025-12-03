@@ -232,6 +232,8 @@ async function loadUserData() {
           venueSubtitle: tvDetails.venue_subtitle || '',
           fontScale: tvDetails.font_scale || 100,
           logoScale: tvDetails.logo_scale || 100,
+          lineHeight: tvDetails.line_height || 1.2,
+          bottomMargin: tvDetails.bottom_margin || 0,
           fontSectionTitle: tvDetails.font_section_title || 32,
           fontItemName: tvDetails.font_item_name || 22,
           fontItemDescription: tvDetails.font_item_description || 12,
