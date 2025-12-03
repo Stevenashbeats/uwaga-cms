@@ -1231,12 +1231,17 @@ function applyLogoScale(scale) {
   });
 }
 
-// Line height
+// Line height - kontroluje odstęp między pozycjami menu
 function applyLineHeight(lineHeight) {
-  console.log(`📏 Applying line height: ${lineHeight}`);
+  console.log(`📏 Applying line height (margin-bottom): ${lineHeight}`);
+  // Konwertuj lineHeight (0.5-5.0) na margin-bottom w pikselach
+  // 1.0 = 16px (domyślny), 0.5 = 8px, 2.0 = 32px
+  const marginBottom = Math.round(lineHeight * 16);
+  console.log(`📏 Calculated margin-bottom: ${marginBottom}px`);
+  
   const menuItems = document.querySelectorAll('.menu-item');
   menuItems.forEach(item => {
-    item.style.lineHeight = lineHeight;
+    item.style.marginBottom = `${marginBottom}px`;
   });
 }
 
