@@ -324,18 +324,12 @@ function initializeUserData() {
     newTvs.tv1 = appState.tvs.tv1;
     newTvs.tv2 = appState.tvs.tv2;
     appState.currentTvId = 'tv1';
-  } else if (currentUser === 'norblin') {
-    // Nowy użytkownik norblin
-    newTvs.tv_norblin = {
-      id: 'tv_norblin',
-      name: 'TV Norblin',
-      venueName: 'Norblin',
-      venueSubtitle: '',
-      owner: 'norblin',
-      sections: []
-    };
-    appState.currentTvId = 'tv_norblin';
-  } else if (currentUser === 'piwna') {
+  }
+  
+  // Usunięto użytkowników: norblin i piwna
+  // Projekt obsługuje tylko KAWA
+  
+  if (false && currentUser === 'piwna') {
     // Nowy użytkownik piwna - UWAGA PIWO
     newTvs.tv_piwna = {
       id: 'tv_piwna',
